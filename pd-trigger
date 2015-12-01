@@ -371,7 +371,7 @@ breadcrumb() {
 # a lazy response dump to logger(1)
 # does not block if no logger(1) in $PATH
   debug "_syslog=${_syslog}"
-  [ "${_syslog}" = "ON" ] && `which -s logger` && \
+  [ "${_syslog}" = "ON" ] && [ -x "$(command -v logger)" ] && \
     echo "${0##*/}: ${*}" | tr '\n' ' ' | logger
 }
 
@@ -441,8 +441,7 @@ _event_type="${event_type:-trigger}"
 
 
 ## action
-
-if ! `which -s curl` ; then
+if [ ! -x "$(command -v curl)" ] ; then
   # TODO: perhaps a fools errand, create netcat http POST function? to ssl?
   # Also tricky, to preserve json \n chars... but ultimate portability.
   die "Error: Missing dependency, requires curl(1)."
