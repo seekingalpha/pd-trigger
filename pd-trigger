@@ -117,8 +117,7 @@ Arguments and config parameters for for ${0##*/}:
      # event_type="string"
      -e string
            event_type, default: "trigger"
-           PagerDuty Docs simply say to set this to "trigger", for reasons
-           unknown.
+           One of "trigger", "acknowledge" or "resolve".
 
      -v    Verbose, print all JSON http server respnses to stdout and stderr.
 
@@ -322,7 +321,7 @@ postmsg() {
 try cat << EOM
 {
       "service_key": "${_service_key:?You must supply a PagerDuty API key, -h for help.}",
-      "event_type": "trigger",
+      "event_type": "${_event_type}",
       "description": "${_description}",
       "client": "${_client}",
 `incident_json`
@@ -476,7 +475,7 @@ debug "Disregarding JSON formatted response, exit 0 only if http 200."
     breadcrumb "${_return}"
     exit 0
   elif [ "${_resp}" = "200" ] ; then
-    echo "triggered PagerDuty incident id: '${_returnkey}'"
+    echo "${_event_type}: PagerDuty incident id: '${_returnkey}'"
     breadcrumb "${_return}"
     exit 0
   else
